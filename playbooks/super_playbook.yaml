@@ -1,0 +1,103 @@
+# Este es mi fichero de playbook
+# Para ejecutarlo:
+#  ansible-playbook -i inventarios/inventario1.yml playbooks/super_playbook.yaml
+
+--- # Crear un nuevo play
+# Contra quien opero
+- hosts: ubuntu01
+  
+  # Opciones de conexión
+  remote_user: root
+  order: inventory # reverse_inventory | sorted | reverse_sorted | shuffle
+  # Ansible va ejecutan los tasks de manera secuencial pero en paralelo sobre diferentes entornos
+  # Por defecto lo hace de 5 en 5
+  
+  # Variables TODO
+  vars:
+        variable1: Hola amigo!!
+        variable2: 22
+        variable3: 
+            subvalor1: 
+                subsubvalores: 
+                    subsubsubvalor: 12
+            subvalor2: 
+                - 1
+                - 3
+    # OJO: En formato JSON (a veces me vienen cosas en JSON... como los ansoble_facts):
+    #    Las llaves {} indican un diccionario
+    #    Los corchetes [] infican una lista
+  # Comienza la definición de tareas
+  tasks:
+   
+        # Comienza UNA tarea
+        - name: Mi primera tarea
+          debug: 
+                # Si quiero usar variables, uso doble llave y el texto entre comillas: 
+                # https://docs.ansible.com/ansible/latest/user_guide/playbooks_templating.html
+                msg: "{{ variable1 }} voy a comenzar una tarea"
+
+        # Comienza OTRA tarea
+        - name: Mi segunda tarea
+          debug:
+                #  !unsafe  EVITA que un texto se procese por JINJAAAA!
+                msg: !unsafe  "En ninja va todo con dobles llaves {{ aqui va mi variable }}"
+        
+        # Comienza OTRA tarea
+        - name: Mi tercera tarea
+          debug:
+                msg: "{{ variable1 }} voy a comenzar la tarea {{ numerotarea }}, en el servidor {{ sistema }} {{ sistema2 }}"
+          # Puedo definir variables a nivel de tarea
+          vars:
+                numerotarea: 3 
+                
+        # Comienza OTRA tarea con variables de diccionario
+        - name: Mi cuarta tarea
+          debug:
+                msg: >
+                    "Valores del diccionario {{ variable3.subvalor2 }}"
+                    "Valores del diccionario {{ variable3.subvalor2 }}"
+          
+        # Comienza una tarea para obtener los facts
+        - name: Mi tarea de facts
+          debug:
+#                msg: "{{ ansible_facts }}"
+                var: ansible_facts.dns.nameservers[0]
+#                var: ansible_facts['dns'].nameservers[0]
+
+        # Mi primera tarea CONDICIONAL
+        - name: Mi tarea condicional
+          debug:
+                msg: "He entrado !!!!!"
+#          when: ansible_facts.distribution == 'Ubuntu' and variable2 == 2
+#          when: ansible_facts.distribution == 'Ubuntu' or variable2 == 2
+          when: # Esta sintaxis es un AND encubierto
+            - ansible_facts.distribution == 'Ubuntu' 
+            - variable2 == 22
+            
+        # Una tarea normalita
+        - name: Mi tarea normalita
+          debug:
+                msg: "Me ejecuto normalmente 1"
+          changed_when: False
+          notify: tarea opcional 1
+          
+        # Una tarea normalita
+        - name: Mi tarea normalita 2
+          debug:
+                msg: "Me ejecuto normalmente 2"
+          changed_when: True
+          notify: mievento
+
+  # 
+  handlers:
+        # Una tarea opcional
+        - name: tarea opcional 1
+          debug:
+                msg: "Me ejecuto opcionalmente 1"
+          listen: mievento
+          
+        # Una tarea opcional
+        - name: tarea opcional 2
+          debug:
+                msg: "Me ejecuto opcionalmente 2"
+          listen: mievento

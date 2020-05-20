@@ -88,6 +88,20 @@
           changed_when: True
           notify: mievento
 
+        # Una tarea que explota
+        - name: Mi tarea explosiva
+          shell:
+                cmd: umane
+          #ignore_errors: True
+          failed_when: explosiva.rc > 200
+          register: explosiva
+          
+        # Una tarea normalita
+        - name: Otra tarea
+          debug:
+                msg: "{{ explosiva.stdout }}"
+          when: explosiva.rc == 0
+
   # 
   handlers:
         # Una tarea opcional

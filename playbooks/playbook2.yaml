@@ -10,6 +10,8 @@
 # apt upgrade
 # creación de un usuario linux
 
+
+#ansible-playbook -i inventarios/inventario1.yml playbooks/playbook2.yaml
 - hosts: all 
 
   remote_user: root
@@ -29,4 +31,3 @@
    - name: Crear usuario
      user: 
         name: prueba
-    

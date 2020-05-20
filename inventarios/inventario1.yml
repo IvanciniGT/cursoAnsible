@@ -1,0 +1,7 @@
+all: 
+    hosts:
+        ubuntu01: 
+    children: 
+        masubuntus: 
+            hosts:
+                ubuntu0[2:3]:

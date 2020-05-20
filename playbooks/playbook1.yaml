@@ -1,31 +1,32 @@
-- hosts: all # Alias de grupo o de servidor
-# Opciones de conexión
-  remote_user: root
-# Tareas  
-  tasks:
-  
-   - name: Que no esté nano
-     apt: name=nano state=absent
-     # MODULO: 
-        # Propiedades del modulo
-   - name: Que esté vim
-     apt: name=vim state=present   
-  
-   - name: Quiero nginx
-     apt: name=nginx state=present
-  
-   - name: También curl
-     apt: name=curl state=present
+# Ejercicio 1
 
-
-# Etapa 1
-#
-# Inventario YAML- 3 máquinas en 1 grupo, mediante rangos numericos
+# Inventario YAML- 3 máquinas en grupos, mediante rangos numericos
 # Ubuntu01 - 
 # Ubuntu02 - 
-# Ubuntu03<- No os lo creais
+# Ubuntu03<- La definís en Ansible, pero no os lo creais en docker
 
 # Playbook:
 # apt update
 # apt upgrade
 # creación de un usuario linux
+
+- hosts: all 
+
+  remote_user: root
+
+  tasks:
+  
+   - name: Actualizar referencias de librerias y dependencias
+     apt: 
+        update_cache: yes
+    
+    
+   - name: Actualizar librerias y dependencias
+     apt: 
+        upgrade: yes
+
+    
+   - name: Crear usuario
+     user: 
+        name: prueba
+    

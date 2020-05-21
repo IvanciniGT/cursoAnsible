@@ -18,8 +18,7 @@
   apt:
     name: nginx
     state: latest
-  notify: nginx_instalado
-  
+
 - name: tarea posinstalacion 1     # copiar la configuracion de nginx
   template:
     src: templates/minginx.conf
@@ -32,3 +31,7 @@
     repo: 'https://github.com/IvanciniGT/webEjemploAnsible'
     dest: "{{ nginx_web_path }}"
 
+- name: tarea posinstalacion 3     # iniciar servicio nginx
+  service:
+    name: nginx
+    state: started

@@ -8,20 +8,27 @@
   apt:
     name: curl
     state: latest
+     
+- name: tarea preinstalacion 3  # instalar git con apt
+  apt:
+    name: git
+    state: latest
     
 - name: tarea instalacion 1     # instalar nginx con apt
   apt:
     name: nginx
     state: latest
+  notify: nginx_instalado
   
 - name: tarea posinstalacion 1     # copiar la configuracion de nginx
   template:
     src: templates/minginx.conf
     dest: /etc/nginx/conf.d/minginx.conf
     mode: '0400'
-    
+  notify: nginx_reconfigurado
+  
 - name: tarea posinstalacion 2     # clonar el web
-  modulo: 
+  git:
+    repo: 'https://github.com/IvanciniGT/webEjemploAnsible'
+    dest: "{{ nginx_web_path }}"
 
-- name: tarea posinstalacion 3     # iniciar servicio nginx
-  modulo: 

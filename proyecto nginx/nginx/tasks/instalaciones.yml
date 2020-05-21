@@ -1,0 +1,20 @@
+---
+# NISTALACIONES NGINX Y REQUERIDOS
+- name: tarea preinstalacion 1  # actualizar apt 
+  apt:
+    update_cache: True 
+ 
+- name: tarea preinstalacion 2  # instalar curl con apt
+  apt:
+    name: curl
+    state: latest
+     
+- name: tarea preinstalacion 3  # instalar git con apt
+  apt:
+    name: git
+    state: latest
+    
+- name: tarea instalacion 1     # instalar nginx con apt
+  apt:
+    name: nginx
+    state: latest

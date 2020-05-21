@@ -1,0 +1,24 @@
+# Paso 1:
+ # Instalaciones:
+  # Nginx
+  # Curl
+# Paso 2: [Modulo git]
+ # Repo nuevo (fuera de Ansible): 
+ # index.html: Soy el fichero de la web
+ # Ansible
+ # Copiar una web de github <- git clone index.html
+    # /web
+# Paso 2.5
+ # Crear variables
+   # ruta_web: /www
+   # puerto: 80
+# Paso 3: [Modulo template]
+ # Crear un fichero de configuración para nginx basado en una plantilla
+  # Cambios en la plantilla: 
+     # Puerto 81
+     # Ruta donde está la web: -> /web
+#Paso 4: Playbook
+ # Pongains valora nuevos para las variables 
+   # ruta_web: /web
+   # puerto: 81
+

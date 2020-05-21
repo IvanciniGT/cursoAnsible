@@ -1,0 +1,27 @@
+---
+# tasks file for nginx
+- name: tarea preinstalacion 1  # actualizar apt 
+  apt:
+    update_cache: True 
+ 
+- name: tarea preinstalacion 2  # instalar curl con apt
+  apt:
+    name: curl
+    state: latest
+    
+- name: tarea instalacion 1     # instalar nginx con apt
+  apt:
+    name: nginx
+    state: latest
+  
+- name: tarea posinstalacion 1     # copiar la configuracion de nginx
+  template:
+    src: templates/minginx.conf
+    dest: /etc/nginx/conf.d/minginx.conf
+    mode: '0400'
+    
+- name: tarea posinstalacion 2     # clonar el web
+  modulo: 
+
+- name: tarea posinstalacion 3     # iniciar servicio nginx
+  modulo: 

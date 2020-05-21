@@ -1,0 +1,10 @@
+
+#ansible-playbook -i inventarios/inventario1.yml playbooks/playbook_roles1.yaml
+- hosts: ubuntu01
+
+  remote_user: root
+  gather_facts: False
+
+  roles:
+    - test
+  

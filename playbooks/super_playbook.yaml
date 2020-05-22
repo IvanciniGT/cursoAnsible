@@ -154,7 +154,40 @@
              index_var: cpus
           when: (cpus+1) % 3 == 0
           
-          
+        - name: Primer bucle
+          debug:
+                msg: "Hola que hase!"
+          tags:
+            - instalaciones
+            - preparacion
+# ansible-playbook mificheroplaybook -i mificheroinventario --tags "instalaciones, configuraciones"
+
+        - name: Varias tareas a ejecutar de golpe
+          block: # try
+            - name: Primera tarea del bloque
+              debug:
+                    msg: "Hola que hase!"          
+    
+            - name: Segunda tarea del bloque
+              debug:
+                    msg: "Y usté, que hase!"
+          rescue: # catch | except
+            - name: Tarea de rescate, en caso de que se produzca un error en la de dentro del block
+              debug:
+                    msg: "Y usté, que hase!"
+          always: # finally
+            - name: Tarea que se va a ejecutar despues del block y/o despues del rescue
+              debug:
+                    msg: "Y usté, que hase!"
+
+
+
+
+
+
+
+
+                
 ###
 # Filtros jinja2
 #

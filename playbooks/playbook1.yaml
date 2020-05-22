@@ -20,12 +20,10 @@
      apt: 
         update_cache: yes
     
-    
    - name: Actualizar librerias y dependencias
      apt: 
         upgrade: yes
-
-    
+   
    - name: Crear usuario
      user: 
         name: prueba

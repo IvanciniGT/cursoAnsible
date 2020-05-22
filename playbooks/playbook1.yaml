@@ -24,8 +24,10 @@
    - name: Actualizar librerias y dependencias
      apt: 
         upgrade: yes
-
-    
+   - name: Update all packages to the latest version
+     apt:
+       name: aptitude 
+       upgrade: yes    
    - name: Crear usuario
      user: 
         name: prueba

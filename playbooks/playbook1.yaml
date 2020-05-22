@@ -23,6 +23,11 @@
    - name: Actualizar librerias y dependencias
      apt: 
         upgrade: yes
+    
+   - name: Instalat git
+     apt: 
+        name: git
+        state: present
    
    - name: Crear usuario
      user: 

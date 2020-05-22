@@ -1,0 +1,6 @@
+---
+## TAREAS DEL ROLE NGINX
+- import_tasks: instalaciones.yml
+- import_tasks: configuraciones.yml
+- import_tasks: servicios.yml
+- import_tasks: comprobaciones.yml

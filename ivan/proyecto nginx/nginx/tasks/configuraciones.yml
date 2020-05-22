@@ -1,0 +1,15 @@
+---
+# CONFIGURACION NGINX y CLONADO REPO WEB
+
+- name: tarea posinstalacion 1     # copiar la configuracion de nginx
+  template:
+    src: templates/minginx.conf
+    dest: /etc/nginx/conf.d/minginx.conf
+    mode: '0400'
+  notify: nginx_reconfigurado
+  
+- name: tarea posinstalacion 2     # clonar el web
+  git:
+    repo: 'https://github.com/IvanciniGT/webEjemploAnsible'
+    dest: "{{ nginx_web_path }}"
+

@@ -1,0 +1,9 @@
+---
+# handlers file for nginx
+
+- name: tarea posinstalacion 4     # iniciar servicio nginx
+  service:
+    name: nginx
+    state: restarted
+  listen: nginx_reconfigurado
+

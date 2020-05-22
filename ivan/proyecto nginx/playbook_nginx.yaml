@@ -1,0 +1,12 @@
+
+#ansible-playbook -i inventarios/inventario1.yml playbooks/playbook2.yaml
+- hosts: ubuntu01 
+  remote_user: root
+  
+  vars:
+    nginx_port: 81 
+    nginx_server: ubuntu01
+    nginx_web_path: /web
+  
+  roles:
+    - nginx

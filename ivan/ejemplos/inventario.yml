@@ -1,0 +1,44 @@
+all: # GRUPO RAIZ
+    hosts: # SERVIDORES SUELTOS DENTRO DEL GRUPO
+        servidor.prod: # Alias
+            ansible_connection: ssh # o paramiko (BSD) | local | docker
+            ansible_host: 192.168.1.123 # o un nombre
+            ansible_user: operador # usuario con que ansible se conecta
+            ansible_password: XXXXX # contaseña: Las buenas prácticas es que no la ponga en texto plano: VAULT
+            ansible_port: 22 # Puerto para ssh o wrm
+            ansible_become: true # Ejecutar como sudo
+            ansible_python_interpreter: /usr/bin/python3 # Ruta del ejecutable python en el remoto
+        servidor.desa:
+        servidor.inte:
+    children: #  SUBGRUPOS
+        webservers: # Linux
+            hosts:
+                servidor[1:10].prod:  
+                servidor[1:5].desa:
+                servidor[1:3].inte:
+            children:
+                tomcat:
+                    hosts:
+                        tservidor[1:10].prod:  
+                        tservidor[1:5].desa:
+                        tservidor[1:3].inte:
+                weblogic:
+                    hosts:
+                        wservidor[1:10].prod:  
+                        wservidor[1:5].desa:
+                        wservidor[1:3].inte:
+        dbservers: #Linux
+            hosts:
+                bd-[a:h].prod: 
+                bd-[a:e].desa:
+                bd-[a:f].inte:
+        bigdata: # Windows
+            hosts:
+                hadoop1.prod:
+                hadoop2.prod:
+        linux:
+            children:
+                webservers:
+                dbservers:
+ungrouped: # SERVIDORES SIN GRUPO NINGUNO
+    mail.miserver.com:

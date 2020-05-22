@@ -1,0 +1,243 @@
+# Este es mi fichero de playbook
+# Para ejecutarlo:
+#  ansible-playbook -i inventarios/inventario1.yml playbooks/super_playbook.yaml
+
+--- # Crear un nuevo play
+# Contra quien opero
+- hosts: ubuntu01
+  
+  # Opciones de conexión
+  remote_user: root
+  order: inventory # reverse_inventory | sorted | reverse_sorted | shuffle
+  # Ansible va ejecutan los tasks de manera secuencial pero en paralelo sobre diferentes entornos
+  # Por defecto lo hace de 5 en 5
+  
+  # Variables TODO
+  vars:
+        variable1: Hola amigo!!
+        variable2: 22
+        variable3: 
+            subvalor1: 
+                subsubvalores: 
+                    subsubsubvalor: 12
+            subvalor2: 
+                - 1
+                - 3
+    # OJO: En formato JSON (a veces me vienen cosas en JSON... como los ansoble_facts):
+    #    Las llaves {} indican un diccionario
+    #    Los corchetes [] infican una lista
+  # Comienza la definición de tareas
+  tasks:
+   
+        # Comienza UNA tarea
+        - name: Mi primera tarea
+          debug: 
+                # Si quiero usar variables, uso doble llave y el texto entre comillas: 
+                # https://docs.ansible.com/ansible/latest/user_guide/playbooks_templating.html
+                msg: "{{ variable1 }} voy a comenzar una tarea"
+
+        # Comienza OTRA tarea
+        - name: Mi segunda tarea
+          debug:
+                #  !unsafe  EVITA que un texto se procese por JINJAAAA!
+                msg: !unsafe  "En ninja va todo con dobles llaves {{ aqui va mi variable }}"
+        
+        # Comienza OTRA tarea
+        - name: Mi tercera tarea
+          debug:
+                msg: "{{ variable1 }} voy a comenzar la tarea {{ numerotarea }}, en el servidor {{ sistema }} {{ sistema2 }}"
+          # Puedo definir variables a nivel de tarea
+          vars:
+                numerotarea: 3 
+                
+        # Comienza OTRA tarea con variables de diccionario
+        - name: Mi cuarta tarea
+          debug:
+                msg: >
+                    "Valores del diccionario {{ variable3.subvalor2 }}"
+                    "Valores del diccionario {{ variable3.subvalor2 }}"
+          
+        # Comienza una tarea para obtener los facts
+        - name: Mi tarea de facts
+          debug:
+#                msg: "{{ ansible_facts }}"
+                var: ansible_facts.dns.nameservers[0]
+#                var: ansible_facts['dns'].nameservers[0]
+# Para obtener los ansible_facst de una maquina o entorno podemos ejecutar:
+# ansible ubuntu01 -i ejercicios/inventarios/inventario1.yml -m setup -u root
+# Tareas Condicionale
+
+        # Mi primera tarea CONDICIONAL
+        - name: Mi tarea condicional
+          debug:
+                msg: "He entrado !!!!!"
+#          when: ansible_facts.distribution == 'Ubuntu' and variable2 == 2
+#          when: ansible_facts.distribution == 'Ubuntu' or variable2 == 2
+          when: # Esta sintaxis es un AND encubierto
+            - ansible_facts.distribution == 'Ubuntu' 
+            - variable2 == 22
+            
+        # Una tarea normalita
+        - name: Mi tarea normalita
+          debug:
+                msg: "Me ejecuto normalmente 1"
+          changed_when: False
+          notify: tarea opcional 1
+          
+        # Una tarea normalita
+        - name: Mi tarea normalita 2
+          debug:
+                msg: "Me ejecuto normalmente 2"
+          changed_when: True
+          notify: mievento
+
+        # Una tarea que explota
+        - name: Mi tarea explosiva
+          shell:
+                cmd: umane
+          ignore_errors: True
+          failed_when: explosiva.rc > 100
+          register: explosiva
+          
+        # Una tarea normalita
+        - name: Otra tarea
+          debug:
+                msg: "{{ explosiva.stdout }}"
+          when: explosiva.rc == 0
+### Expresiones para utilizar en los when: when, failed_when, changed_when
+#
+#     Expresiones sobre tareas que se han ejecutado
+#       explosiva is failed
+#       explosiva is succeeded 
+#       explosiva is skipped
+#       explosiva is changed
+#      
+#     Otras explesiones útiles sobre variables (incluyendo tareas que se hayan ejecutado):
+#       mivariable is defined
+#       mivariable is undefined or mivariable == False
+
+          
+        # Tarea comprobadora
+        - name: Una tarea que comprueba un texto
+          debug:
+                msg: La salida de error de la tarea explosiva contiene 'not found'
+          #when: "'found' not in explosiva.stderr"
+          when: "'Este 17354828346482783648383645 texto' is search('Este [0-9]* texto')"
+          
+          # Regex:  Mirar https://regex101.com/
+          # j
+          # . Cualquier cosa
+          # [0-9]
+          # [a-z]
+          # [A-Z0-9ñ]
+          # 
+          #Ocurrencia:
+          #
+          # ? Opcional
+          # + 1 o más
+          # * Opciona o las veces que sea
+          # {6} tiene que aparecer 6 veces
+          # {4,8} tiene que aparecer de 4 a 8 veces
+          # {,9} puede o no aparacer hasta 9 veces
+          #
+          #^ Comienzo de texto
+          #$ Final de texto
+          #when: explosiva.stderr is match("n.t f..nd")
+          
+       
+        # Nuestra primera tarea en bucle!!!!!!
+        - name: Primer bucle
+          debug:
+                msg: "Veamos las CPS: {{ item | upper }} "
+          loop:  "{{ ansible_facts.processor }}"
+          loop_control:
+             index_var: cpus
+          when: (cpus+1) % 3 == 0
+          
+        - name: Primer bucle
+          debug:
+                msg: "Hola que hase!"
+          tags:
+            - instalaciones
+            - preparacion
+# ansible-playbook mificheroplaybook -i mificheroinventario --tags "instalaciones, configuraciones"
+
+        - name: Varias tareas a ejecutar de golpe
+          block: # try
+            - name: Primera tarea del bloque
+              debug:
+                    msg: "Hola que hase!"          
+    
+            - name: Segunda tarea del bloque
+              debug:
+                    msg: "Y usté, que hase!"
+          rescue: # catch | except
+            - name: Tarea de rescate, en caso de que se produzca un error en la de dentro del block
+              debug:
+                    msg: "Y usté, que hase!"
+          always: # finally
+            - name: Tarea que se va a ejecutar despues del block y/o despues del rescue
+              debug:
+                    msg: "Y usté, que hase!"
+
+
+
+
+
+
+
+
+                
+###
+# Filtros jinja2
+#
+# abs, attr, batch, capitalize, center, default, dictsort, escape, filesizeformat, first, float, forceescape, format, 
+# groupby, indent, int, join, last, length, list, lower, map, max, min, pprint, random, reject, rejectattr, replace, 
+# reverse, round, safe, select, selectattr, slice, sort, string, striptags, sum, title, tojson, trim, truncate, unique, 
+# upper, urlencode, urlize, wordcount, wordwrap, xmlattr
+#
+# Uso {{ variable | upper }}
+#
+# https://jinja.palletsprojects.com/en/2.11.x/templates/#builtin-filters
+
+
+
+#ansible_facts.processor
+#                                       cpus  Dividir entre 3     Resto 
+# Fila 0: 0 (id de cpu)                  1          0               1
+#      1: Intel (fabricante)             2          0               2
+#      2: Xeon (modelo)                  3          1               0
+#      3: 1 (id de cpu)                  4          1               1
+#      4: Intel (fabricante)             5          1               2
+#      5: Xeon (modelo)                  6          2               0
+
+
+
+# Variables dentro de loops. Requiere Ansible 2.8
+# ansible_loop.allitems       La lista de todos los elementos en el bucle
+# ansible_loop.index          La iteración actual del bucle. (comenzando en 1)
+# ansible_loop.index0         La iteración actual del bucle. (comenzando en 0)
+# ansible_loop.revindex       El número de iteraciones hasta acabar el bucle (comenzando en 1)
+# ansible_loop.revindex0      El número de iteraciones hasta acabar el bucle (comenzando en 0)
+# ansible_loop.first          Verdadero si es la primera iteración
+# ansible_loop.last           Verdadero si es la última iteración
+# ansible_loop.length         El número de elementos en el bucle
+# ansible_loop.previtem       El elemento de la iteración anterior del bucle. Indefinido durante la primera iteración.
+# ansible_loop.nextitem       El elemento de la siguiente iteración del bucle. Indefinido durante la última iteración.
+
+
+          
+          
+  # 
+  handlers:
+        # Una tarea opcional
+        - name: tarea opcional 1
+          debug:
+                msg: "Me ejecuto opcionalmente 1"
+          listen: mievento
+          
+        # Una tarea opcional
+        - name: tarea opcional 2
+          debug:
+                msg: "Me ejecuto opcionalmente 2"
+          listen: mievento

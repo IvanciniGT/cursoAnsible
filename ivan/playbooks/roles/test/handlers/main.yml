@@ -1,0 +1,6 @@
+---
+# HANDLERS
+- name: Tarea 1 asociada al evento mievento1
+  debug:
+    msg: "Soy la primera tareas del evento mievento1"
+  listen: mievento1

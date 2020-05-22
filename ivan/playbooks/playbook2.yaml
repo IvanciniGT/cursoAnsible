@@ -1,0 +1,33 @@
+# Ejemplo 1
+
+# Inventario YAML- 3 máquinas en grupos, mediante rangos numericos
+# Ubuntu01 - 
+# Ubuntu02 - 
+# Ubuntu03<- La definís en Ansible, pero no os lo creais en docker
+
+# Playbook:
+# apt update
+# apt upgrade
+# creación de un usuario linux
+
+
+#ansible-playbook -i inventarios/inventario1.yml playbooks/playbook2.yaml
+- hosts: all 
+
+  remote_user: root
+
+  tasks:
+  
+   - name: Actualizar referencias de librerias y dependencias
+     apt: 
+        update_cache: yes
+    
+    
+   - name: Actualizar librerias y dependencias
+     apt: 
+        upgrade: yes
+
+    
+   - name: Crear usuario
+     user: 
+        name: prueba

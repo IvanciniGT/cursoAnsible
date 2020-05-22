@@ -1,0 +1,18 @@
+- hosts: all # Alias de grupo o de servidor
+# Opciones de conexión
+  remote_user: root
+# Tareas  
+  tasks:
+  
+   - name: Que no esté nano
+     apt: name=nano state=absent
+     # MODULO: 
+        # Propiedades del modulo
+   - name: Que esté vim
+     apt: name=vim state=present   
+  
+   - name: Quiero nginx
+     apt: name=nginx state=present
+  
+   - name: También curl
+     apt: name=curl state=present

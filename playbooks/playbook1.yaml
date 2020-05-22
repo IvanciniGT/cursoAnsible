@@ -19,12 +19,10 @@
    - name: Actualizar referencias de librerias y dependencias
      apt: 
         update_cache: yes
-        force_apt_get: yes
     
    - name: Actualizar librerias y dependencias
      apt: 
         upgrade: yes
-        force_apt_get: yes
    
    - name: Crear usuario
      user: 
